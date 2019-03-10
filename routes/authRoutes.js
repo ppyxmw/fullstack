@@ -21,4 +21,3 @@ module.exports = (app) => {
     res.send(req.user);
   });
 };
-oPb4S50Nhz5tBkYj;
