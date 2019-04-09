@@ -21,19 +21,18 @@ passport.use(
       clientID: keys.googleClientID,
       clientSecret: keys.googleClientSecret,
       callbackURL: '/auth/google/callback',
-      userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
-      proxy: true
+      proxy: true,
+      userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
     },
-    (accessToken, refreshToken, profile, done) => {
-      User.findOne({ googleId: profile.id }).then((exsitingUser) => {
-        if (exsitingUser) {
-          done(null, exsitingUser);
-        } else {
-          new User({ googleId: profile.id })
-            .save()
-            .then((user) => (null, user));
-        }
-      });
+    async (accessToken, refreshToken, profile, done) => {
+      const exsitingUser = await User.findOne({ googleId: profile.id });
+
+      if (exsitingUser) {
+        return done(null, exsitingUser);
+      }
+
+      const user = await new User({ googleId: profile.id }).save();
+      done(null, user);
     }
   )
 );
